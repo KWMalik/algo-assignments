@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+
+        var array = [
+          ['N',  'pow(n, 2)', 'n*log(n)', 'pow(2, n)'],
+        ];
+
+        for (var i = 1; i < 10; i++) {
+          array[i] = [i, Math.pow(i, 2), i*Math.log(i), Math.pow(2, i)];
+          //console.log(array[i]);
+        }
+
+        var data = google.visualization.arrayToDataTable(array);
+
+        var options = {
+          title: 'Big(O) Charts'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <div id="chart_div" style="width: 900px; height: 500px;"></div>
+  </body>
+</html>
