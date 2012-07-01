@@ -35,13 +35,6 @@ def sort(array, pivot_pos_finder_lambda)
  end
  
  pivot_pos = pivot_pos_finder_lambda.call(array)
- #p array
- #p array.length
- #p pivot_pos
- if (pivot_pos == nil) then
-  puts "-----"
-  p array
- end
  
  array[0], array[pivot_pos] = array[pivot_pos], array[0]
   
@@ -77,7 +70,17 @@ puts "Num comparisons when using first element as pivot: #{num_comparisons}"
 sorted_array, num_comparisons = sort(Array.new(int_array), lambda{|x| x.length - 1})
 puts "Num comparisons when using last element as pivot: #{num_comparisons}"
 
-# Method to find median index as per problem specification
+# Method to find median-of-three as per below specification.
+# *** 
+#     Consider the first, middle, and final elements of the given array.
+#     (If the array has odd length it should be clear what the "middle" element 
+#     is; for an array with even length 2k, use the kth element as the "middle" element. 
+#     So for the array 4 5 6 7, the "middle" element is the second one ---- 5 and not 6!) 
+#     Identify which of these three elements is the median (i.e., the one whose value is 
+#     in between the other two), and use this as your pivot. 
+# ****
+# This one is a sloppy implementation, to get things working.  I have a better implementation
+# just after this method definition, which uses some of the ruby idioms.
 median_index_finder = lambda do |x|
   middle_index = (x.length%2 == 0) ? x.length/2 - 1: x.length/2
 
@@ -99,5 +102,21 @@ median_index_finder = lambda do |x|
   return  median_index
 end
 
+# Relatively better implementation of median-of-three algorithm
+median_index_finder2 = lambda do |x|
+  if x.length <= 2 then
+    arr = x
+  else 
+    middle_index = (x.length%2 == 0) ? x.length/2 - 1: x.length/2
+    arr = [x[0], x[middle_index], x[x.length - 1]]
+  end
+  median = arr.sort[arr.length/2]
+  return x.index(median)
+end
+
+
 sorted_array, num_comparisons = sort(Array.new(int_array), median_index_finder)
+puts "Num comparisons when using median-of-three element as pivot: #{num_comparisons}"
+
+sorted_array, num_comparisons = sort(Array.new(int_array), median_index_finder2)
 puts "Num comparisons when using median-of-three element as pivot: #{num_comparisons}"
