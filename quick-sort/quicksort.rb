@@ -1,3 +1,12 @@
+# Ruby program to perform quick sort on a given array.  The array is read from a test input file, QuickSort.txt.
+# This program prints the number of comparisons done in a quick sort implementation for following three conditions:
+#   a) When pivot is first element of the array
+#   b) When pivot is last element of the array#
+#   c) When pivot is the median of the first, middle and last element of the array.
+#
+# (Developed for Assignment of "Algorithm: Design and Analysis - Part 1" https://www.coursera.org/course/algo
+# Author: Srikanth P Shreenivas
+
 def partition(array, left_index, right_index)
 
   pivot = array[left_index]
@@ -19,19 +28,27 @@ def partition(array, left_index, right_index)
   return elements_left_of_pivot, pivot_element, elements_right_of_pivot
 end
 
-
-def sort(array, pivot_pos)
+def sort(array, pivot_pos_finder_lambda)
 
  if (array.length <= 1)
     return array, 0
+ end
+ 
+ pivot_pos = pivot_pos_finder_lambda.call(array)
+ #p array
+ #p array.length
+ #p pivot_pos
+ if (pivot_pos == nil) then
+  puts "-----"
+  p array
  end
  
  array[0], array[pivot_pos] = array[pivot_pos], array[0]
   
  left, pivot, right = partition(array, 0, array.length-1)
  
- sorted_left, left_comparisons = sort(left, 0);
- sorted_right, right_comparisons = sort(right, 0);
+ sorted_left, left_comparisons = sort(left, pivot_pos_finder_lambda);
+ sorted_right, right_comparisons = sort(right, pivot_pos_finder_lambda);
  
  return sorted_left.concat(pivot).concat(sorted_right), (array.length - 1 + left_comparisons + right_comparisons)
 end
@@ -51,12 +68,36 @@ end
 
 
 
-int_array = [3,4,1,2,0, 5,6,1,1,1,1]
-p sort(int_array, 0)
-
-
 puts "Quick Sort Implementation"
 int_array = read_array("QuickSort.txt", 10000)
 
-p sort(int_array, 0)
+sorted_array, num_comparisons = sort(Array.new(int_array), lambda{|x| 0})
+puts "Num comparisons when using first element as pivot: #{num_comparisons}"
 
+sorted_array, num_comparisons = sort(Array.new(int_array), lambda{|x| x.length - 1})
+puts "Num comparisons when using last element as pivot: #{num_comparisons}"
+
+# Method to find median index as per problem specification
+median_index_finder = lambda do |x|
+  middle_index = (x.length%2 == 0) ? x.length/2 - 1: x.length/2
+
+  first_element = x[0]
+  middle_element = x[middle_index]
+  last_element = x[x.length - 1]
+
+  if ( (first_element >= middle_element and first_element <= last_element) or 
+       (first_element <= middle_element and first_element >= last_element)) then
+      median_index = 0
+  elsif ((middle_element >= first_element and middle_element <= last_element) or
+         (middle_element <= first_element and middle_element >= last_element))
+         median_index = middle_index
+  elsif ((last_element >= first_element and last_element <= middle_element) or
+         (last_element <= first_element and last_element >= middle_element))
+         median_index = x.length - 1
+  end
+
+  return  median_index
+end
+
+sorted_array, num_comparisons = sort(Array.new(int_array), median_index_finder)
+puts "Num comparisons when using median-of-three element as pivot: #{num_comparisons}"
